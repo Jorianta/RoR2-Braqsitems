@@ -1,0 +1,36 @@
+{
+  "strings": {
+    //Tier1//
+    "BIGGEREXPLOSIONS": "Accelerant",
+    "ITEM_BIGGEREXPLOSIONS_NAME": "Accelerant",
+    "ITEM_BIGGEREXPLOSIONS_PICKUP": "Increase explosion radius.",
+    "ITEM_BIGGEREXPLOSIONS_DESC": "Increases <style=cIsDamage>explosion radius</style> by <style=cIsDamage>10%</style> <style=cStack>(+5% per stack)</style>.",
+    "ITEM_BIGGEREXPLOSIONS_LORE": "",
+
+    //Tier2//
+    "EXPLODEAGAIN": "Inert Bomblet",
+    "ITEM_EXPLODEAGAIN_NAME": "Inert Bomblet",
+    "ITEM_EXPLODEAGAIN_PICKUP": "Your explosives can scatter smaller bombs.",
+    "ITEM_EXPLODEAGAIN_DESC": "Explosions scatter up to <style=cIsDamage>3</style> <style=cStack>(+2 per stack)</style> bomblets, each dealing <style=cIsDamage>50%</style> TOTAL damage within 50% of the radius of the original explosion.",
+    "ITEM_EXPLODEAGAIN_LORE": "",
+
+    //Tier3//
+    "EXPLOSIONFRENZY": "My Manifesto",
+    "ITEM_EXPLOSIONFRENZY_NAME": "My Manifesto",
+    "ITEM_EXPLOSIONFRENZY_PICKUP": "Hitting 5 enemies with an explosion temporarily enhances your explosives.",
+    "ITEM_EXPLOSIONFRENZY_DESC": "<style=cIsDamage>Hitting 5 enemies</style> with <style=cIsDamage>1</style> explosion sends you into a <style=cIsDamage>frenzy</style> for <style=cIsDamage>6s</style> <style=cStack>(+4 per stack)</style>. Increases explosion radius by <style=cIsDamage>100%</style>, and all explosions <style=cIsDamage>ignite</style> for an additional <style=cIsDamage>50%</style> total damage. Has a cooldown of <style=cIsUtility>10s</style>.",
+    "ITEM_EXPLOSIONFRENZY_LORE": "",
+
+    "SPREADDEBUFFS": "Sympathetic Pathogen",
+    "ITEM_SPREADDEBUFFS_NAME": "Sympathetic Pathogen",
+    "ITEM_SPREADDEBUFFS_PICKUP": "Your debuffs are contagious.",
+    "ITEM_SPREADDEBUFFS_DESC": "<style=cIsUtility>Infect</style> enemies on hit. At <style=cIsUtility>1</style> <style=cStack>(+1 per stack)</style> health threshold, <style=cIsUtility>infected</style> enemies infect up to <style=cIsUtility>6</style> other enemies, applying all stacks of the original enemy's debuffs for 3 seconds.",
+    "ITEM_SPREADDEBUFFS_LORE": "",
+
+    "LIGHTNINGDAMAGEBOOST": "Induction Coil",
+    "ITEM_LIGHTNINGDAMAGEBOOST_NAME": "Induction Coil",
+    "ITEM_LIGHTNINGDAMAGEBOOST_PICKUP": "Your chain attacks increase in damage with each bounce.",
+    "ITEM_LIGHTNINGDAMAGEBOOST_DESC": "Chain attacks deal <style=cIsDamage>50%</style> <style=cStack>(+20% per stack)</style> more damage, plus an additional <style=cIsDamage>50%</style> <style=cStack>(+20% per stack)</style> with each enemy hit.",
+    "ITEM_LIGHTNINGDAMAGEBOOST_LORE": ""
+  }
+}
