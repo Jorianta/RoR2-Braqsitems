@@ -19,7 +19,7 @@
     "ITEM_EXPLOSIONFRENZY_NAME": "My Manifesto",
     "ITEM_EXPLOSIONFRENZY_PICKUP": "Hitting 5 enemies with an explosion temporarily enhances your explosives.",
     "ITEM_EXPLOSIONFRENZY_DESC": "<style=cIsDamage>Hitting 5 enemies</style> with <style=cIsDamage>1</style> explosion sends you into a <style=cIsDamage>frenzy</style> for <style=cIsDamage>6s</style> <style=cStack>(+4 per stack)</style>. Increases explosion radius by <style=cIsDamage>100%</style>, and all explosions <style=cIsDamage>ignite</style> for an additional <style=cIsDamage>50%</style> total damage. Has a cooldown of <style=cIsUtility>10s</style>.",
-    "ITEM_EXPLOSIONFRENZY_LORE": "",
+    "ITEM_EXPLOSIONFRENZY_LORE": "\"By the way Sir before I forget, uhh... I found these documents on your desk while I was cleaning out your quarters called \"My Manifesto,\" and I just, I read a little bit, and I'm just wondering... why would you... what is that, why would you write something like that?\"\n-Signal echoes, UES Safe Travels",
 
     "SPREADDEBUFFS": "Sympathetic Pathogen",
     "ITEM_SPREADDEBUFFS_NAME": "Sympathetic Pathogen",
