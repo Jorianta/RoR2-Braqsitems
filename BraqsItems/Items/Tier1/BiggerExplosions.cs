@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using Rewired.Utils;
 using MonoMod.Cil;
 using TMPro;
+using BraqsItems.Misc;
 
 namespace BraqsItems
 {
@@ -74,26 +75,21 @@ namespace BraqsItems
 
         public static void Hooks()
         {
-            //On.RoR2.Projectile.ProjectileExplosion.Detonate += ProjectileExplosion_Detonate;
-            On.RoR2.BlastAttack.Fire += BlastAttack_Fire;
+            Stats.StatsCompEvent.StatsCompRecalc += StatsCompEvent_StatsCompRecalc;
         }
 
-
-        public static BlastAttack.Result BlastAttack_Fire(On.RoR2.BlastAttack.orig_Fire orig, BlastAttack self)
+        public static void StatsCompEvent_StatsCompRecalc(object sender, Stats.StatsCompRecalcArgs args)
         {
-            Log.Debug("BiggerExplosions:BlastAttack_Fire");
-
-            if (NetworkServer.active && self.attacker && self.attacker.TryGetComponent(out CharacterBody body) && body.inventory)
+            if (args.Stats && NetworkServer.active)
             {
-                var items = body.inventory.GetItemCount(itemDef);
-                float radiusMultiplier = 1 + basePercent + (items - 1) * percentPerStack;
-
-                self.radius *= radiusMultiplier;
-
-                if (items > 0) Util.ExplosionEffectHelper.doExtraExplosionEffect(self.position, self.radius);
-            } 
-
-            return orig(self);
+                if (args.Stats.inventory)
+                {
+                    int stack = args.Stats.inventory.GetItemCount(itemDef);
+                    if (stack > 0) {
+                        args.Stats.blastRadiusBoostAdd *= 1 + (stack-1) * percentPerStack + basePercent;
+                    }
+                }
+            }
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using R2API;
+﻿using BraqsItems.Misc;
+using R2API;
 using RoR2;
-using RoR2.Items;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using UnityEngine.AddressableAssets;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 
 namespace BraqsItems
@@ -13,15 +12,13 @@ namespace BraqsItems
     internal class ExplosionFrenzy
     {
         public static ItemDef itemDef;
-        public static BuffDef buffDef;
-        public static BuffDef coolDownBuffDef;
-        public static BuffDef primedBuffDef;
-
-        public static GameObject ExplosionEffect;
 
         public static bool isEnabled = true;
-        public static float baseDuration = 6f;
-        public static float durationPerStack = 4f;
+        public static float baseBurn = 0.5f;
+        public static float burnPerStack = 0.5f;
+        public static float explosionBoost = 0.1f;
+        public static int baseMaxBonus = 10;
+        public static int maxBonusPerStack = 10;
 
 
         internal static void Init()
@@ -67,31 +64,6 @@ namespace BraqsItems
             ItemDisplayRuleDict displayRules = new ItemDisplayRuleDict(null);
             ItemAPI.Add(new CustomItem(itemDef, displayRules));
 
-            //BUFFS//
-            buffDef = ScriptableObject.CreateInstance<BuffDef>();
-            buffDef.name = "Manifestation";
-            buffDef.canStack = false;
-            buffDef.isHidden = false;
-            buffDef.isDebuff = false;
-            buffDef.isCooldown = false;
-            buffDef.iconSprite = Addressables.LoadAssetAsync<Sprite>("RoR2/Base/EliteFire/texAffixRedIcon.png").WaitForCompletion();
-
-            coolDownBuffDef = ScriptableObject.CreateInstance<BuffDef>();
-            coolDownBuffDef.name = "Manifesto Cooldown";
-            coolDownBuffDef.canStack = true;
-            coolDownBuffDef.isHidden = false;
-            coolDownBuffDef.isDebuff = true;
-            coolDownBuffDef.isCooldown = true;
-            coolDownBuffDef.iconSprite = Addressables.LoadAssetAsync<Sprite>("RoR2/DLC1/ElementalRingVoid/texBuffElementalRingVoidCooldownIcon.tif").WaitForCompletion();
-
-            primedBuffDef = ScriptableObject.CreateInstance<BuffDef>();
-            primedBuffDef.name = "Manifesto Ready";
-            primedBuffDef.canStack = false;
-            primedBuffDef.isHidden = false;
-            primedBuffDef.isDebuff = false;
-            primedBuffDef.isCooldown = false;
-            primedBuffDef.iconSprite = Addressables.LoadAssetAsync<Sprite>("RoR2/DLC1/ElementalRingVoid/texBuffElementalRingVoidReadyIcon.tif").WaitForCompletion();
-
 
             Hooks();
 
@@ -112,94 +84,139 @@ namespace BraqsItems
 
         private static BlastAttack.Result BlastAttack_Fire(On.RoR2.BlastAttack.orig_Fire orig, BlastAttack self)
         {
-            bool flag = self.attacker.TryGetComponent(out CharacterBody body);
-            //Do bonuses
-            if (NetworkServer.active && flag && body.HasBuff(buffDef))
-            {
-                self.radius *= 2;
-                self.damageType |= DamageType.IgniteOnHit;
-            }
 
-            Util.ExplosionEffectHelper.doExtraExplosionEffect(self.position, self.radius);
-
-            //Apply buff
+            //Apply burn
             BlastAttack.Result result = orig(self);
 
-            if (self.attacker && flag)
-            {            
-                if (body.HasBuff(primedBuffDef) && result.hitCount >= 5)
+            if (self.attacker && self.attacker.TryGetComponent(out CharacterBody body) && body.inventory)
+            {
+                int stacks = body.inventory.GetItemCount(itemDef);
+                if (stacks > 0 && result.hitCount > 0)
                 {
-                    addAnarchyBuff(body);
+                    float damage = ((stacks - 1) * burnPerStack + baseBurn) * self.baseDamage;
+
+                    for (int i = 0; i < result.hitCount; i++)
+                    {
+                        HurtBox hurtBox = result.hitPoints[i].hurtBox;
+
+                        if ((bool)hurtBox.healthComponent)
+                        {
+                            InflictDotInfo inflictDotInfo = default(InflictDotInfo);
+                            inflictDotInfo.victimObject = hurtBox.healthComponent.gameObject;
+                            inflictDotInfo.attackerObject = self.attacker;
+                            inflictDotInfo.totalDamage = damage;
+                            inflictDotInfo.dotIndex = DotController.DotIndex.Burn;
+                            inflictDotInfo.damageMultiplier = 1f;
+                            InflictDotInfo dotInfo = inflictDotInfo;
+
+                            StrengthenBurnUtils.CheckDotForUpgrade(body.inventory, ref dotInfo);
+                            
+                            DotController.InflictDot(ref dotInfo);
+                        }
+                    }
                 }
             }
             
             return result;
         }
 
-        private static void addAnarchyBuff(CharacterBody body)
-        {
-            Log.Debug("Adding buff");
-            if (!body.inventory) return;
-            int stack = body.inventory.GetItemCount(itemDef);
-            float duration = (stack - 1) * durationPerStack + baseDuration;
-            body.AddTimedBuff(buffDef, duration);
-        }
-
         public class ExplosionFrenzyBehavior : CharacterBody.ItemBehavior
         {
             bool wasActive = false;
+            int maxBonus;
+            Dictionary<HealthComponent, int> victims = new Dictionary<HealthComponent, int>();
 
-            private void OnStart()
+            private void Start()
             {
                 Log.Debug("ExplosionFrenzyBehavior:Start()");
-                wasActive = false;
+                maxBonus = maxBonus * (stack-1) + baseMaxBonus;
+                On.RoR2.DotController.OnDotStackAddedServer += DotController_OnDotStackAddedServer;
+                On.RoR2.DotController.OnDotStackRemovedServer += DotController_OnDotStackRemovedServer;
+                On.RoR2.HealthComponent.OnDestroy += HealthComponent_OnDestroy;
+                Stats.StatsCompEvent.StatsCompRecalc += StatsCompEvent_StatsCompRecalc;
             }
 
             private void OnDestroy()
             {
-                if ((bool)body)
+                Log.Debug("ExplosionFrenzyBehavior:OnDestroy()");
+                On.RoR2.DotController.OnDotStackAddedServer -= DotController_OnDotStackAddedServer;
+                On.RoR2.DotController.OnDotStackRemovedServer -= DotController_OnDotStackRemovedServer;
+                On.RoR2.HealthComponent.OnDestroy -= HealthComponent_OnDestroy;
+                Stats.StatsCompEvent.StatsCompRecalc -= StatsCompEvent_StatsCompRecalc;
+            }
+
+            private void DotController_OnDotStackAddedServer(On.RoR2.DotController.orig_OnDotStackAddedServer orig, DotController self, object dotStack)
+            {
+                DotController.DotStack stack = (DotController.DotStack)dotStack;
+                Debug.Log(UnityEngine.Object.ReferenceEquals(stack.attackerObject, body.gameObject));
+
+                if (stack.attackerObject && UnityEngine.Object.ReferenceEquals(stack.attackerObject, body.gameObject) && self.victimHealthComponent 
+                    && (stack.dotIndex == DotController.DotIndex.Burn || stack.dotIndex == DotController.DotIndex.StrongerBurn))
                 {
-                    if (body.HasBuff(primedBuffDef))
+                    HealthComponent key = self.victimHealthComponent;
+                    if (!victims.ContainsKey(key))
                     {
-                        body.RemoveBuff(primedBuffDef);
+                        victims.Add(key, 1);
+                        body.RecalculateStats();
+                        Log.Debug(victims.Count + " burning enemies");
                     }
-                    if (body.HasBuff(coolDownBuffDef))
+                    else
                     {
-                        body.RemoveBuff(coolDownBuffDef);
+                        victims[key]++;
                     }
+                }
+
+                orig(self, dotStack);
+
+            }
+
+            private void DotController_OnDotStackRemovedServer(On.RoR2.DotController.orig_OnDotStackRemovedServer orig, DotController self, object dotStack)
+            {
+                DotController.DotStack stack = (DotController.DotStack)dotStack;
+
+                if (stack.attackerObject && UnityEngine.Object.ReferenceEquals(stack.attackerObject, body.gameObject) && self.victimHealthComponent 
+                    && (stack.dotIndex == DotController.DotIndex.Burn || stack.dotIndex == DotController.DotIndex.StrongerBurn))
+                {
+                    HealthComponent key = self.victimHealthComponent;
+                    if (victims.ContainsKey(key))
+                    {
+                        victims[key]--;
+
+                        if (victims[key] <= 0)
+                        {
+                            victims.Remove(key);
+                            body.RecalculateStats();
+                            Log.Debug(victims.Count + " burning enemies");
+                        }
+                    }
+                }
+
+                orig(self, dotStack);
+            }
+
+            private void HealthComponent_OnDestroy(On.RoR2.HealthComponent.orig_OnDestroy orig, HealthComponent self)
+            {
+                if (victims.ContainsKey(self))
+                {
+                    victims.Remove(self);
+                    body.RecalculateStats();
+                    Log.Debug(victims.Count + " burning enemies");
                 }
             }
 
-            private void FixedUpdate()
-            {
-                bool active = body.HasBuff(buffDef);
-                bool cooldown = body.HasBuff(coolDownBuffDef);
-                bool ready = body.HasBuff(primedBuffDef);
-                //If the buff just ran out, add cooldown
-                if (wasActive && !active)
-                {
-                    Log.Debug("Adding cooldown");
-                    AddCooldown();
-                }
-                if (!cooldown && !ready && !active)
-                {
-                    Log.Debug("Adding ready buff");
-                    body.AddBuff(primedBuffDef);
-                }
-                if (ready && active)
-                {
-                    Log.Debug("removing ready buff");
-                    body.RemoveBuff(primedBuffDef);
-                }
 
-                wasActive = active;
-            }
-
-            private void AddCooldown()
+            public void StatsCompEvent_StatsCompRecalc(object sender, Stats.StatsCompRecalcArgs args)
             {
-                for (int k = 1; (float)k <= 10f; k++)
+                if (args.Stats && NetworkServer.active)
                 {
-                    body.AddTimedBuff(coolDownBuffDef, k);
+                    if (args.Stats.inventory)
+                    {
+                        int bonus = Math.Min(victims.Count,maxBonus);
+                        if (bonus > 0)
+                        {
+                            args.Stats.blastRadiusBoostAdd *= (bonus) * explosionBoost + 1;
+                        }
+                    }
                 }
             }
         }

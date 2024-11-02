@@ -67,6 +67,25 @@ namespace BraqsItems
         public static void Hooks()
         {
             On.RoR2.Orbs.LightningOrb.Begin += LightningOrb_Begin;
+            On.RoR2.Orbs.VoidLightningOrb.Begin += VoidLightningOrb_Begin;
+        }
+
+        private static void VoidLightningOrb_Begin(On.RoR2.Orbs.VoidLightningOrb.orig_Begin orig, RoR2.Orbs.VoidLightningOrb self)
+        {
+            Log.Debug("LightningDamageBoost:VoidLightningOrb_Begin");
+
+            if (self.attacker && self.attacker.TryGetComponent(out CharacterBody body) && body.inventory)
+            {
+                int count = body.inventory.GetItemCount(itemDef);
+
+                if (count > 0)
+                {
+                    self.damageValue *= 1 + (count - 1) * percentPerStack + basePercent;
+                    Log.Debug("Chain damage = " + self.damageValue);
+                }
+            }
+
+            orig(self);
         }
 
         private static void LightningOrb_Begin(On.RoR2.Orbs.LightningOrb.orig_Begin orig, RoR2.Orbs.LightningOrb self)

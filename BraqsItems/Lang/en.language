@@ -4,21 +4,27 @@
     "BIGGEREXPLOSIONS": "Accelerant",
     "ITEM_BIGGEREXPLOSIONS_NAME": "Accelerant",
     "ITEM_BIGGEREXPLOSIONS_PICKUP": "Increase explosion radius.",
-    "ITEM_BIGGEREXPLOSIONS_DESC": "Increases <style=cIsDamage>explosion radius</style> by <style=cIsDamage>10%</style> <style=cStack>(+5% per stack)</style>.",
+    "ITEM_BIGGEREXPLOSIONS_DESC": "Increases <style=cIsDamage>explosion radius</style> by <style=cIsDamage>5%</style> <style=cStack>(+5% per stack)</style>.",
     "ITEM_BIGGEREXPLOSIONS_LORE": "",
 
     //Tier2//
     "EXPLODEAGAIN": "Inert Bomblet",
     "ITEM_EXPLODEAGAIN_NAME": "Inert Bomblet",
     "ITEM_EXPLODEAGAIN_PICKUP": "Your explosives can scatter smaller bombs.",
-    "ITEM_EXPLODEAGAIN_DESC": "Explosions scatter up to <style=cIsDamage>3</style> <style=cStack>(+2 per stack)</style> bomblets, each dealing <style=cIsDamage>50%</style> TOTAL damage within 50% of the radius of the original explosion.",
+    "ITEM_EXPLODEAGAIN_DESC": "Explosions scatter up to <style=cIsDamage>3</style> <style=cStack>(+2 per stack)</style> bomblets, each dealing <style=cIsDamage>100%</style> TOTAL damage within 50% of the radius of the original explosion.",
     "ITEM_EXPLODEAGAIN_LORE": "",
+
+    "REPAIRBROKENITEMS": "Inert Bomblet",
+    "ITEM_REPAIRBROKENITEMS_NAME": "Inert Bomblet",
+    "ITEM_REPAIRBROKENITEMS_PICKUP": "Repairs some of your items on stage advance.",
+    "ITEM_REPAIRBROKENITEMS_DESC": "Repair up to <style=cIsDamage>2</style> <style=cStack>(+2 per stack)</style> broken items on stage advance. May fail for rarer items.",
+    "ITEM_REPAIRBROKENITEMS_LORE": "",
 
     //Tier3//
     "EXPLOSIONFRENZY": "My Manifesto",
     "ITEM_EXPLOSIONFRENZY_NAME": "My Manifesto",
-    "ITEM_EXPLOSIONFRENZY_PICKUP": "Hitting 5 enemies with an explosion temporarily enhances your explosives.",
-    "ITEM_EXPLOSIONFRENZY_DESC": "<style=cIsDamage>Hitting 5 enemies</style> with <style=cIsDamage>1</style> explosion sends you into a <style=cIsDamage>frenzy</style> for <style=cIsDamage>6s</style> <style=cStack>(+4 per stack)</style>. Increases explosion radius by <style=cIsDamage>100%</style>, and all explosions <style=cIsDamage>ignite</style> for an additional <style=cIsDamage>50%</style> total damage. Has a cooldown of <style=cIsUtility>10s</style>.",
+    "ITEM_EXPLOSIONFRENZY_PICKUP": "All explosions ignite. Explosions are larger while your enemies burn.",
+    "ITEM_EXPLOSIONFRENZY_DESC": "Explosions <style=cIsDamage>ignite</style> for an additional <style=cIsDamage>50%</style> <style=cStack>(+50% per stack)</style> total damage. While you burn an enemy, gain <style=cIsDamage>10%</style> explosion radius, stacking up to <style=cIsUtility>10</style> <style=cStack>(+10 per stack)</style> times.",
     "ITEM_EXPLOSIONFRENZY_LORE": "\"By the way Sir before I forget, uhh... I found these documents on your desk while I was cleaning out your quarters called \"My Manifesto,\" and I just, I read a little bit, and I'm just wondering... why would you... what is that, why would you write something like that?\"\n-Signal echoes, UES Safe Travels",
 
     "SPREADDEBUFFS": "Sympathetic Pathogen",
@@ -30,7 +36,7 @@
     "LIGHTNINGDAMAGEBOOST": "Induction Coil",
     "ITEM_LIGHTNINGDAMAGEBOOST_NAME": "Induction Coil",
     "ITEM_LIGHTNINGDAMAGEBOOST_PICKUP": "Your chain attacks increase in damage with each bounce.",
-    "ITEM_LIGHTNINGDAMAGEBOOST_DESC": "Chain attacks deal <style=cIsDamage>50%</style> <style=cStack>(+20% per stack)</style> more damage, plus an additional <style=cIsDamage>50%</style> <style=cStack>(+20% per stack)</style> with each enemy hit.",
+    "ITEM_LIGHTNINGDAMAGEBOOST_DESC": "Chain attacks deal <style=cIsDamage>50%</style> <style=cStack>(+20% per stack)</style> more damage, plus an additional <style=cIsDamage>50%</style> <style=cStack>(+20% per stack)</style> with each hit.",
     "ITEM_LIGHTNINGDAMAGEBOOST_LORE": ""
   }
 }

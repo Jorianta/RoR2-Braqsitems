@@ -1,8 +1,11 @@
 using BepInEx;
+using BraqsItems.Items.Tier2;
+using BraqsItems.Misc;
 using BraqsItems.Util;
 using R2API;
 using R2API.Utils;
 using RoR2;
+using RoR2.Stats;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -36,6 +39,8 @@ namespace BraqsItems
 
             pluginInfo = Info;
             ExplosionEffectHelper.Init();
+            BrokenItemRelationships.Init();
+            Stats.Init();
             // AssetBundle = AssetBundle.LoadFromFile(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(pluginInfo.Location), "[X]assetbundle"));
 
             if (BiggerExplosions.isEnabled) 
@@ -46,9 +51,17 @@ namespace BraqsItems
             {
                 ExplodeAgain.Init();
             }
+            if(RepairBrokenItems.isEnabled)
+            {
+                RepairBrokenItems.Init();
+            }
             if (ExplosionFrenzy.isEnabled)
             {
                 ExplosionFrenzy.Init();
+            }
+            if(LightningDamageBoost.isEnabled)
+            {
+                LightningDamageBoost.Init();
             }
             if (SpreadDebuffs.isEnabled)
             {

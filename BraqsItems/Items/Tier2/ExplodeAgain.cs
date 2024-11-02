@@ -13,9 +13,9 @@ namespace BraqsItems
         public static ItemDef itemDef;
 
         public static bool isEnabled = true;
-        public static float percentPerStack = 0.05f;
-        public static float basePercent = 0.1f;
-        public static float damageCoefficient = 0.5f;
+        public static float percentChance = 25f;
+        public static float percentRadius = 50f;
+        public static float damageCoefficient = 1f;
 
         public static GameObject bomblettePrefab;
 
@@ -79,7 +79,6 @@ namespace BraqsItems
 
         public static BlastAttack.Result BlastAttack_Fire(On.RoR2.BlastAttack.orig_Fire orig, BlastAttack self)
         {
-            Log.Debug("ExplodeAgain:BlastAttack_Fire");
 
             if (NetworkServer.active && self.attacker && self.attacker.TryGetComponent(out CharacterBody body) && body.inventory)
             {
@@ -94,7 +93,7 @@ namespace BraqsItems
         //Much of this code was taken from the molten perf. If it looks weird, blame Hopoo. There were some strange things going on before I trimmed it down.
         protected static void FireChildExplosions(BlastAttack self, CharacterBody body, int items)
         {
-
+            Log.Debug("ExplodeAgain:FireChildExplosions");
             Vector3 vector2 = self.position;
             Vector3 vector3 = Vector3.up;
 
@@ -108,13 +107,13 @@ namespace BraqsItems
 
             GameObject bomblette = bomblettePrefab;
             if(!bomblette.TryGetComponent(out ProjectileExplosion explosion)) Log.Error("couldnt change blast radius");
-            explosion.blastRadius = self.radius * 0.5f;
+            explosion.blastRadius = self.radius * (percentRadius/100f);
 
             float damage = RoR2.Util.OnHitProcDamage(self.baseDamage, body.damage, damageCoefficient);
 
             for (int n = 0; n < maxbombs; n++)
             {
-                if (!RoR2.Util.CheckRoll(25f * self.procCoefficient, body.master)) continue;
+                if (!RoR2.Util.CheckRoll(percentChance * self.procCoefficient, body.master)) continue;
 
                 float speedOverride = UnityEngine.Random.Range(0.5f, 1f) * self.radius * 3;
 
